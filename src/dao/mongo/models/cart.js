@@ -1,29 +1,25 @@
 import mongoose from 'mongoose';
 
-const collection = "carts";
+const collection = "Carts";
 
 const schema = new mongoose.Schema({
     products: [
         {
             product: {
-                type: String,
-                ref: 'Product',
-                required: true
-            },
-            price: {
-                type: Number,
-                required: true
+                type: mongoose.SchemaTypes.ObjectId,
+                ref: 'products',
+                // required: true
             },
             quantity: {
                 type: Number,
-                required: true,
+                // required: true,
                 default: 1
             }
         }
     ],
     total: {
         type: Number,
-        required: true
+        // required: true
     }
 }, { timestamps: true });
 
