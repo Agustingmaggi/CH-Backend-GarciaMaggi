@@ -21,6 +21,6 @@ app.use(express.static(`${__dirname}/public`))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/cart', cartRouter);
+app.use('/api/cart', cartRouter);
 app.use('/', viewsRouter)
 app.use('/api/products', productsRouter)

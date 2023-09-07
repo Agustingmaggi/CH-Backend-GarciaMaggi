@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 router.get('/carts/:cid', async (req, res) => {
     try {
         const cartId = req.params.cid;
-        const cart = await cartModel.findById(cartId).populate('products').lean();
+        const cart = await cartModel.findById(cartId).populate('products.product').lean();
         console.log(cart)
         if (!cart) {
             return res.status(404).send({ status: "error", error: "Carrito no encontrado" });
