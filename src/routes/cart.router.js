@@ -41,11 +41,54 @@ router.put('/:cartId', async (req, res) => {
     }
 });
 
+router.put('/:cartId/products/:productId', async (req, res) => {
+    try {
+        const cartId = req.params.cartId;
+        const productId = req.params.productId;
+        const { quantity } = req.body;
+
+        const cart = await cartService.getCart(cartId);
+
+        if (!cart) {
+            return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
+
+        const productIndex = cart.products.findIndex(product => product.product._id.toString() === productId);
+
+        if (productIndex === -1) {
+            return res.status(404).json({ message: 'Producto no encontrado en el carrito' });
+        }
+
+        cart.products[productIndex].quantity = quantity;
+
+        await cartService.updateCart(cartId, cart);
+
+        res.json({ message: 'Cantidad de producto en el carrito actualizada exitosamente' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
 router.delete('/:cartId', async (req, res) => {
     try {
         const cartId = req.params.cartId;
         await cartService.deleteCart(cartId);
         res.json({ message: 'Carrito eliminado exitosamente' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
+router.delete('/:cartId/products/:productId', async (req, res) => {
+    try {
+        const cartId = req.params.cartId;
+        const productId = req.params.productId;
+
+        await cartService.removeProductFromCart(cartId, productId);
+
+        res.json({ message: 'Producto eliminado del carrito exitosamente' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error en el servidor' });

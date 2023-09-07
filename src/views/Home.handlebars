@@ -1,11 +1,32 @@
-<h1>holaa!</h1>
+<h1>¡Hola!</h1>
 
-{{#each products}}
-
-<p>{{this.title}}</p>
-<p>{{this.categories}}</p>
-<p>{{this.price}}</p>
-<p>{{this.stock}}</p>
-<img src={{this.images.[0]}}>
-
+{{#each productos}}
+<div class="producto">
+    <p>{{this.title}}</p>
+    <p>{{this.categories}}</p>
+    <p>Precio ${{this.price}}</p>
+    <p>Stock {{this.stock}}</p>
+    <img src="{{this.images.[0]}}">
+    <button class="agregar-carrito">Agregar al carrito</button>
+</div>
 {{/each}}
+
+{{#if hasPrevPage}}
+<a href="/?page={{prevPage}}"><button>Anterior</button></a>
+{{/if}}
+
+<h5>{{page}}</h5>
+
+{{#if hasNextPage}}
+<a href="/?page={{nextPage}}"><button>Siguiente</button></a>
+{{/if}}
+
+<style>
+    .producto {
+        border: 1px solid #ccc;
+        /* Agrega un borde a cada producto */
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+    }
+</style>

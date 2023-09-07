@@ -1,0 +1,19 @@
+<h1>Contenido del Carrito</h1>
+
+{{#each productos}}
+<div class="producto">
+    <p>{{this.product.title}}</p>
+    <p>Cantidad: {{this.quantity}}</p>
+    <p>Precio por unidad: ${{this.product.price}}</p>
+    <img src="{{this.product.images.[0]}}">
+</div>
+{{/each}}
+
+<style>
+    .producto {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+    }
+</style>
