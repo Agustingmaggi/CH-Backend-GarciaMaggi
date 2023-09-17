@@ -19,13 +19,29 @@ router.get('/', async (req, res) => {
             hasPrevPage,
             prevPage,
             hasNextPage,
-            nextPage
+            nextPage,
+            user: req.session.user
         });
     } catch (error) {
         console.error(error);
         res.status(500).send({ status: "error", error: "Ocurrió un error en el servidor" });
     }
 });
+
+router.get('/profile', async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login')
+    }
+    res.render(('Profile'), { user: req.session.user })
+})
+
+router.get('/register', async (req, res) => {
+    res.render('Register')
+})
+
+router.get('/login', async (req, res) => {
+    res.render('Login')
+})
 
 router.get('/carts/:cid', async (req, res) => {
     try {
