@@ -8,6 +8,8 @@ import viewsRouter from './routes/views.router.js'
 import productsRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.router.js'
 import sessionsRouter from './routes/sessions.router.js'
+import passport from 'passport'
+import initializeStrategies from './config/passport.config.js'
 
 const app = express()
 
@@ -33,6 +35,9 @@ app.use(session({
     saveUninitialized: false,
     secret: "papa"
 }))
+
+initializeStrategies()
+app.use(passport.initialize())
 
 app.use('/api/cart', cartRouter);
 app.use('/', viewsRouter)
