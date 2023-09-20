@@ -3,11 +3,11 @@ import local from 'passport-local'
 import UserManager from "../dao/mongo/managers/UserManager.js"
 import auth from "../services/auth.js"
 
-const localStrategy = local.Strategy
+const LocalStrategy = local.Strategy
 const usersService = new UserManager()
 
 const initializeStrategies = () => {
-    passport.use('register', new localStrategy({ passReqToCallback: true, usernameField: 'email' }, async (email, password, done) => {
+    passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
         const {
             firstName,
             lastName,
@@ -27,7 +27,7 @@ const initializeStrategies = () => {
         done(null, result)
     }))
 
-    passport.use('login', new localStrategy({ usernameField: 'email' }, async (email, password, done) => {
+    passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
         if (!email || !password) return done(null, false, { message: "Incomplete Values" })
 
         if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
