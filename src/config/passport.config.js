@@ -2,6 +2,7 @@ import passport from 'passport'
 import local from 'passport-local'
 import UserManager from "../dao/mongo/managers/UserManager.js"
 import auth from "../services/auth.js"
+import GithubStrategy from 'passport-github2'
 
 const LocalStrategy = local.Strategy
 const usersService = new UserManager()
@@ -52,6 +53,27 @@ const initializeStrategies = () => {
 
     }))
 
+    passport.use('github', new GithubStrategy({
+        clientID: 'Iv1.6716409f195868aa',
+        clientSecret: '95a51a7beedda6fca62c6963355a5ed414dc2621',
+        callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
+    }, async (accessToken, refreshToken, profile, done) => {
+        console.log(profile)
+        const { email, name } = profile._json
+
+        const user = await usersService.getBy({ email })
+        if (!user) {
+            const newUser = {
+                firstName: name,
+                email,
+                password: ''
+            }
+            const result = await usersService.create(newUser)
+            done(null, result)
+        } else {
+            done(null, user)
+        }
+    }))
 
     passport.serializeUser((user, done) => {
         return done(null, user._id)

@@ -12,6 +12,12 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/api/se
     res.send({ status: "success", message: "logged in" })
 })
 
+router.get('/github', passport.authenticate('github'), (req, res) => { })
+router.get('/githubcallback', passport.authenticate('github'), (req, res) => {
+    req.session.user = req.user
+    res.redirect('/')
+})
+
 router.get('/authFail', (req, res) => {
     console.log(req.session.messages)
     res.status(401).send({ status: "error", error: "error de autenticacion" })
