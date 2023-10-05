@@ -1,9 +1,10 @@
 <h1>¡Hola!</h1>
-<Br>
-Bienvenido {{user.firstName}}!
-<Br>
+<a href="/login">login</a>
+<a href="/profile">profile</a>
+<!-- Mostrar elementos solo si el usuario está autenticado -->
+{{user.name}}
 {{user.email}}
-
+<!-- Mostrar otros elementos si el usuario no está autenticado -->
 {{#each productos}}
 <div class="producto">
     <p>{{this.title}}</p>
@@ -26,6 +27,10 @@ Bienvenido {{user.firstName}}!
 {{/if}}
 
 <style>
+    * {
+        background-color: darkslategrey;
+    }
+
     .producto {
         border: 1px solid #ccc;
         /* Agrega un borde a cada producto */

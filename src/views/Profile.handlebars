@@ -1,7 +1,15 @@
 Profile
 <Br>
-{{user.firstName}}
+{{#if user}}
+{{user.name}}
 <Br>
 {{user.email}}
-
 <a href="/api/sessions/logout"><button>Logout</button></a>
+{{else}} No hay ningun usuario logeado!
+<a href="/login">Login</a>
+{{/if}}
+<style>
+    * {
+        background-color: darkslategrey;
+    }
+</style>

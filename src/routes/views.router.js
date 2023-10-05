@@ -2,9 +2,27 @@ import { Router } from 'express'
 import productModel from '../dao/mongo/models/products.js';
 import cartModel from '../dao/mongo/models/cart.js';
 
+import jwt from 'jsonwebtoken'
+import passportCall from "../middlewares/passportCall.js"
+
 const router = Router()
 
-router.get('/', async (req, res) => {
+// function authenticateJWT(req, res, next) {
+//     const token = req.cookies.authCookie; // Obtén el token de las cookies
+//     if (!token) {
+//         return res.redirect('/login'); // Redirige si no hay token
+//     }
+
+//     jwt.verify(token, 'jwtSecret', (err, user) => {
+//         if (err) {
+//             return res.redirect('/login'); // Redirige si el token es inválido
+//         }
+//         req.user = user; // Establece req.user con los datos del usuario
+//         next();
+//     });
+// }
+
+router.get('/', passportCall('jwt'), async (req, res) => {
     try {
         const { page } = req.query
         const result = await productModel.paginate({}, { page, limit: 5, lean: true });
@@ -13,6 +31,8 @@ router.get('/', async (req, res) => {
         const currentPage = result.page
         const { hasPrevPage, hasNextPage, prevPage, nextPage } = result
 
+        const user = req.user
+
         res.render("Home", {
             productos: productos,
             page: currentPage,
@@ -20,20 +40,19 @@ router.get('/', async (req, res) => {
             prevPage,
             hasNextPage,
             nextPage,
-            user: req.session.user
+            user: user
         });
+        // console.log('----> este', req.user, 'viene de un console log en la ruta / de views router')
     } catch (error) {
         console.error(error);
         res.status(500).send({ status: "error", error: "Ocurrió un error en el servidor" });
     }
 });
 
-router.get('/profile', async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/login')
-    }
-    res.render(('Profile'), { user: req.session.user })
-})
+router.get('/profile', passportCall('jwt'), async (req, res) => {
+    res.render('Profile', { user: req.user });
+    console.log(req.user)
+});
 
 router.get('/register', async (req, res) => {
     res.render('Register')
