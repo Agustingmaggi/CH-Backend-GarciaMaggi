@@ -2,8 +2,11 @@ import cartModel from "../models/cart.js";
 
 export default class cartManager {
 
-    getCart = (cartId) => {
-        return cartModel.findOne({ _id: cartId }).populate('products.product').lean();
+    getCart = (cartId, options = {}) => {
+        if (options.populate) {
+            return cartModel.findOne({ _id: cartId }).populate('products.product').lean();
+        }
+        return cartModel.findOne({ _id: cartId })
     }
 
     createCart = (cart) => {

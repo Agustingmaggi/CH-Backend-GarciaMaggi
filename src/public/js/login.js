@@ -13,6 +13,7 @@ form.addEventListener('submit', async e => {
         }
     })
     const result = await response.json()
+    console.log(result)
     if (response.status === 200) {
         window.location.replace('/')
     }

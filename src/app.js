@@ -4,9 +4,10 @@ import mongoose from "mongoose"
 import cookieParser from 'cookie-parser'
 
 import viewsRouter from './routes/views.router.js'
-import sessionsRouter from './routes/sessions.router.js'
 import productsRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.router.js'
+import dictionaryRouter from './routes/dictionary.router.js'
+import sessionsRouter from './routes/SessionsRouter.js'
 
 import initializeStrategies from './config/passport.config.js'
 import __dirname from './utils.js'
@@ -49,3 +50,4 @@ app.use('/api/cart', cartRouter);
 app.use('/', viewsRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use('/api/products', productsRouter)
+app.use('/api/dictionary', dictionaryRouter)

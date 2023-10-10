@@ -3,58 +3,71 @@ import local from 'passport-local'
 import UserManager from "../dao/mongo/managers/UserManager.js"
 import auth from "../services/auth.js"
 import GithubStrategy from 'passport-github2'
-import { Strategy, ExtractJwt } from 'passport-jwt'
+import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
 import { cookieExtractor } from '../utils.js'
 
 const LocalStrategy = local.Strategy
 const usersService = new UserManager()
 
 const initializeStrategies = () => {
-    passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email', session: false }, async (req, email, password, done) => {
-        const {
-            firstName,
-            lastName,
-            age
-        } = req.body
-        if (!firstName || !email || !password) return done(null, false, { message: "incomplete values" })
-        const hashedPassword = await auth.createHash(password)
-        const newUser = {
-            firstName,
-            lastName,
-            email,
-            age,
-            password: hashedPassword
-        }
-        const result = await usersService.create(newUser)
-        console.log(firstName)
-        done(null, result)
-    }))
+    passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email', session: false },
+        async (req, email, password, done) => {
+            try {
+                const { firstName, lastName, age } = req.body
 
-    passport.use('login', new LocalStrategy({ usernameField: 'email', session: false }, async (email, password, done) => {
-        if (!email || !password) return done(null, false, { message: "Incomplete Values" })
+                if (!firstName || !email) return done(null, false, { message: "incomplete values" })
 
-        if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-            const adminUser = {
-                firstName: "admin",
-                lastName: "",
-                email: "",
-                age: 0,
-                password: "adminCod3r123",
-                role: "admin"
+                const exists = await usersService.getBy({ email })
+                if (exists) return done(null, false, { message: 'User already exists' })
+
+                const hashedPassword = await auth.createHash(password)
+                const newUser = {
+                    firstName,
+                    lastName,
+                    email,
+                    age,
+                    password: hashedPassword
+                }
+                const result = await usersService.create(newUser)
+                console.log(firstName)
+                return done(null, result)
+            } catch (error) {
+                console.log(error)
+                return done(error)
             }
-            req.session.user = adminUser;
-            console.log(adminUser)
-            return res.send({ status: "success", message: "Logeado como administrador" });
-        }
+        }))
 
-        const user = await usersService.getBy({ email })
-        if (!user) return done(null, false, { message: "Incorrect Credentials" })
-        const isValidPassword = await auth.validatePassword(password, user.password)
-        if (!isValidPassword) done(null, false, { message: "Incorrect Credentials" })
-        done(null, user)
-    }))
+    passport.use('login', new LocalStrategy({ usernameField: 'email', session: false },
+        async (req, email, password, done) => {
+            try {
+                if (!email || !password) return done(null, false, { message: "Incomplete Values" })
 
-    passport.use('jwt', new Strategy({
+                if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+                    const adminUser = {
+                        firstName: "admin",
+                        lastName: "",
+                        email: "",
+                        age: 0,
+                        password: "adminCod3r123",
+                        role: "admin"
+                    }
+                    req.session.user = adminUser;
+                    console.log(adminUser)
+                    return res.send({ status: "success", message: "Logeado como administrador" });
+                }
+
+                const user = await usersService.getBy({ email })
+                if (!user) return done(null, false, { message: "Incorrect Credentials" })
+                const isValidPassword = await auth.validatePassword(password, user.password)
+                if (!isValidPassword) done(null, false, { message: "Incorrect Credentials" })
+                done(null, user)
+            } catch (error) {
+                console.log(error)
+                return done(error)
+            }
+        }))
+
+    passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
         secretOrKey: 'jwtSecret'
     }, async (payload, done) => {

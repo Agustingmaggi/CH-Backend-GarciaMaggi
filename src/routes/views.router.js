@@ -7,24 +7,9 @@ import passportCall from "../middlewares/passportCall.js"
 
 const router = Router()
 
-// function authenticateJWT(req, res, next) {
-//     const token = req.cookies.authCookie; // Obtén el token de las cookies
-//     if (!token) {
-//         return res.redirect('/login'); // Redirige si no hay token
-//     }
-
-//     jwt.verify(token, 'jwtSecret', (err, user) => {
-//         if (err) {
-//             return res.redirect('/login'); // Redirige si el token es inválido
-//         }
-//         req.user = user; // Establece req.user con los datos del usuario
-//         next();
-//     });
-// }
-
 router.get('/', passportCall('jwt'), async (req, res) => {
     try {
-        const { page } = req.query
+        const { page = 1 } = req.query
         const result = await productModel.paginate({}, { page, limit: 5, lean: true });
         // console.log(result) 
         const productos = result.docs
