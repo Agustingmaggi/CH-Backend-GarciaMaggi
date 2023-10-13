@@ -1,6 +1,9 @@
 <h1>Contenido del Carrito</h1>
+<a href="/">Inicio</a>
+<br><br><br>
 
-{{#each productos}}
+{{#if cart.products.length}}
+{{#each cart.products}}
 <div class="producto">
     <p>{{this.product.title}}</p>
     <p>Cantidad: {{this.quantity}}</p>
@@ -8,6 +11,9 @@
     <img src="{{this.product.images.[0]}}">
 </div>
 {{/each}}
+{{else}}
+<p>No tienes productos en tu carrito.</p>
+{{/if}}
 
 <style>
     .producto {
@@ -17,3 +23,5 @@
         text-align: center;
     }
 </style>
+
+<script src="../js/carrito"></script>

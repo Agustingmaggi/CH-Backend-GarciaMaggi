@@ -5,7 +5,7 @@ const passportCall = (strategy, options = {}) => {
         passport.authenticate(strategy, async (error, user, info) => {
             if (error) return next(error);
             if (!options.strategyType) {
-                return res.sendInternalError('strategyType not defined')
+                return res.status(500).json({ status: "error", error: "strategyType not defined" });
             }
             if (!user) {
                 switch (options.strategyType) {

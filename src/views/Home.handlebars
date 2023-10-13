@@ -1,9 +1,10 @@
-<h1>¡Hola!</h1>
+<h1>¡Hola! {{user.name}} {{user.email}}</h1><br><br>
 <a href="/login">login</a>
 <a href="/profile">profile</a>
+<a href="/register">registrate</a>
+<a href="/carrito">carrito</a>
+<a href="/logout" id="logoutButton">Logout</a>
 <!-- Mostrar elementos solo si el usuario está autenticado -->
-{{user.name}}
-{{user.email}}
 <!-- Mostrar otros elementos si el usuario no está autenticado -->
 {{#each productos}}
 <div class="producto">
@@ -12,7 +13,7 @@
     <p>Precio ${{this.price}}</p>
     <p>Stock {{this.stock}}</p>
     <img src="{{this.images.[0]}}">
-    <button class="agregar-carrito">Agregar al carrito</button>
+    <button onclick="addProduct('{{this._id}}')" class="agregar-carrito">Agregar al carrito</button>
 </div>
 {{/each}}
 
@@ -39,3 +40,6 @@
         text-align: center;
     }
 </style>
+
+
+<script src="/js/home.js"></script>

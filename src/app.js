@@ -16,12 +16,14 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import passport from 'passport'
 
+import config from './config/config.js'
+
 const app = express()
 
-const PORT = process.env.PORT || 8080
+const PORT = config.app.PORT
 app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
 
-const connection = mongoose.connect("mongodb+srv://agustingmaggi:Agustin011235@cluster0.ewlnbwy.mongodb.net/ecommerce?retryWrites=true&w=majority")
+const connection = mongoose.connect(config.mongo.URL)
 
 app.engine('handlebars', Handlebars.engine())
 app.set('views', `${__dirname}/views`)
@@ -30,6 +32,7 @@ app.set('view engine', 'handlebars')
 app.use(express.static(`${__dirname}/public`))
 app.use(express.json())
 app.use(cookieParser())
+
 
 app.use(express.urlencoded({ extended: true }))
 

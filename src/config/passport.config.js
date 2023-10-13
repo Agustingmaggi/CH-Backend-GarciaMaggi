@@ -1,13 +1,16 @@
 import passport from 'passport'
 import local from 'passport-local'
 import UserManager from "../dao/mongo/managers/UserManager.js"
+import CartManager from '../dao/mongo/managers/cartsManager.js'
 import auth from "../services/auth.js"
 import GithubStrategy from 'passport-github2'
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
 import { cookieExtractor } from '../utils.js'
+import config from './config.js'
 
 const LocalStrategy = local.Strategy
 const usersService = new UserManager()
+const cartService = new CartManager
 
 const initializeStrategies = () => {
     passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email', session: false },
@@ -28,6 +31,17 @@ const initializeStrategies = () => {
                     age,
                     password: hashedPassword
                 }
+
+                let cart
+                if (req.cookies['cart']) {
+                    cart = req.cookies['cart']
+                } else {
+                    cartResult = await cartService.createCart
+                    cart = cartResult._id
+                }
+
+                newUser.cart = cart
+
                 const result = await usersService.create(newUser)
                 console.log(firstName)
                 return done(null, result)
@@ -38,11 +52,11 @@ const initializeStrategies = () => {
         }))
 
     passport.use('login', new LocalStrategy({ usernameField: 'email', session: false },
-        async (req, email, password, done) => {
+        async (email, password, done) => {
             try {
                 if (!email || !password) return done(null, false, { message: "Incomplete Values" })
 
-                if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+                if (email === config.app.ADMIN_EMAIL && password === config.app.ADMIN_PASSWORD) {
                     const adminUser = {
                         firstName: "admin",
                         lastName: "",
