@@ -1,18 +1,14 @@
 import BaseRouter from './BaseRouter.js'
 import cartManager from '../dao/mongo/managers/cartsManager.js'
 import productsManager from '../dao/mongo/managers/productsManager.js'
+import cartController from '../controllers/cart.controller.js'
 
-const cartService = new cartManager
-const productService = new productsManager
+const cartService = new cartManager()
+const productService = new productsManager()
 
 class CartRouter extends BaseRouter {
     init() {
-        this.get('/:cartId', ['USER'], async (req, res) => {
-            const cartId = req.params.cartId
-            const cart = await cartService.getCart(cartId)
-            if (!cart) return res.status(404).send({ status: "error", error: "Cart not found" })
-            res.send({ status: "success", payload: cart })
-        })
+        this.get('/:cartId', ['PUBLIC'], cartController.getCart)
         this.post('/', async (req, res) => { //el prof puso ['ADMIN'] como middleware supongo de executePolicies.js pero no existe tal politica en su codigo, es raro
             const result = await cartService.createCart()
             res.send({ status: "success", payload: result._id })
