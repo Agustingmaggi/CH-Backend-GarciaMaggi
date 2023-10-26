@@ -1,9 +1,6 @@
 const executePolicies = (policies) => {
     return (req, res, next) => {
-        if (!req.user) {
-            // Manejar el caso en que req.user es null
-            return next();
-        }
+        console.log(req.user);
         if (policies[0] === "PUBLIC") return next();
         if (policies[0] === "NO_AUTH" && !req.user) return next();
         if (policies[0] === "NO_AUTH" && req.user) return res.sendUnauthorized("Already Logged In");
