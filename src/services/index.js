@@ -1,11 +1,11 @@
-import ProductsService from "./ProductsServices.js";
-import CartService from "./CartServices.js";
-import SessionService from "./SessionServices.js";
+import ProductsRepository from "./repositories/ProductsRepository.js";
+import CartsRepository from "./repositories/CartsRepository.js";
+import SessionRepository from "./repositories/SessionRepository.js";
 
 import PersistenceFactory from "../dao/PersistenceFactory.js";
 
 const { ProductsDao, CartsDao, UsersDao } = await PersistenceFactory.getPersistence();
 
-export const productsService = new ProductsService(new ProductsDao())
-export const cartService = new CartService(new CartsDao())
-export const userService = new SessionService(new UsersDao())
+export const productsService = new ProductsRepository(new ProductsDao())
+export const cartService = new CartsRepository(new CartsDao())
+export const userService = new SessionRepository(new UsersDao())

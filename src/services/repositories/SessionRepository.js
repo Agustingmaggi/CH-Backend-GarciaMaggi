@@ -1,4 +1,4 @@
-export default class SessionService {
+export default class SessionRepository {
     constructor(dao) {
         this.dao = dao
     }
