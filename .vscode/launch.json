@@ -13,8 +13,10 @@
             ],
             "program": "${workspaceFolder}\\src\\app.js",
             "env": {
-                "PERSISTENCE": "MEMORY"
-            }
+                "PERSISTENCE": "FS"
+            },
+            "restart": true,
+            "runtimeExecutable": "nodemon"
         }
     ]
 }
