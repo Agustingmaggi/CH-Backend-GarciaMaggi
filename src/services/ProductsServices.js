@@ -1,21 +1,21 @@
 export default class ProductsService {
-    constructor(manager) {
-        this.manager = manager;
+    constructor(dao) {
+        this.dao = dao;
     }
 
     getProducts = () => {
-        return this.manager.getProducts();
+        return this.dao.getProducts();
     }
     createProducts = (product) => {
-        return this.manager.createProduct(product)
+        return this.dao.createProduct(product)
     }
     updateProducts = (id, product) => {
-        return this.manager.updateProduct(id, product)
-    } //en todos estos metodos hay que poner la misma cant de parametros que en los metodos del manager, lo pongo aca porque me di cuenta con este update.
+        return this.dao.updateProduct(id, product)
+    } //en todos estos metodos hay que poner la misma cant de parametros que en los metodos del dao, lo pongo aca porque me di cuenta con este update.
     getProduct = (params) => {
-        return this.manager.getProduct(params)
+        return this.dao.getProduct(params)
     }
     deleteProduct = (id) => {
-        return this.manager.deleteProduct(id)
+        return this.dao.deleteProduct(id)
     }
 }

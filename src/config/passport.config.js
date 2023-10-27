@@ -1,7 +1,7 @@
 import passport from 'passport'
 import local from 'passport-local'
-import UserManager from "../dao/mongo/managers/UserManager.js"
-import CartManager from '../dao/mongo/managers/cartsManager.js'
+import UserManager from "../dao/mongo/managers/UserDao.js"
+import CartManager from '../dao/mongo/managers/cartsDao.js'
 import auth from "../services/auth.js"
 import GithubStrategy from 'passport-github2'
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'

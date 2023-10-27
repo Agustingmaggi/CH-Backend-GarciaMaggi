@@ -1,4 +1,4 @@
-import cartManager from "../dao/mongo/managers/cartsManager.js";
+import cartManager from "../dao/mongo/managers/cartsDao.js";
 
 const cartService = new cartManager();
 
