@@ -82,6 +82,7 @@ const ticket = async (req, res) => {
 
     for (const productInfo of productsToPurchase) {
         const { productId, quantity } = productInfo;
+
         // Busca el producto en la base de datos
         const product = await productsService.getProduct(productId);
 
@@ -118,7 +119,11 @@ const ticket = async (req, res) => {
 
         } else {
             // Agrega el producto al arreglo de productos no comprados
-            productsNotPurchased.push(productId);
+            console.log(`stock previo a la compra: ${product.stock}`)
+            console.log(`cantidad que se quiso comprar: ${quantity}`)
+            const nuevoStock = await productsService.getProduct(productId)
+            console.log(`stock luego de la compra: ${nuevoStock.stock}`)
+            productsNotPurchased.push(productInfo.product);
         }
     }
 

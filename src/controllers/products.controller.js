@@ -43,7 +43,6 @@ const updateProduct = async (req, res) => {
     const { pid } = req.params
 
     const product = await productsService.getProduct({ _id: pid })
-    console.log(product)
     const updateProducto = {
         title: req.body.title || product.title,
         categories: req.body.categories || product.categories,
