@@ -11,6 +11,8 @@ class CartRouter extends BaseRouter {
         this.put('/:cartId/products/:productId', ['NO_AUTH'], cartController.updateCart)
 
         this.put('/products/:productId', ['NO_AUTH'], cartController.addProdToCart)
+
+        this.post('/:cid/purchase', ['PUBLIC'], cartController.ticket)
     }
 }
 const cartRouter = new CartRouter()
