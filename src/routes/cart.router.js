@@ -8,9 +8,11 @@ class CartRouter extends BaseRouter {
 
         this.post('/', ['PUBLIC'], cartController.createCart)
 
+        //este endpoint agrega un producto 1 sola vez al carrito
         this.put('/:cartId/products/:productId', ['NO_AUTH'], cartController.updateCart)
 
-        this.put('/products/:productId', ['NO_AUTH'], cartController.addProdToCart)
+        // //este endpoint aumenta la cantidad de un producto ya agregado en un carrito
+        // this.put('/products/:productId', ['NO_AUTH'], cartController.addProdToCart)
 
         this.post('/:cid/purchase', ['PUBLIC'], cartController.ticket)
     }

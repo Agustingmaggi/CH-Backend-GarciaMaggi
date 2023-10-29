@@ -50,7 +50,7 @@ const updateProduct = async (req, res) => {
         price: req.body.price || product.price,
         stock: req.body.stock || product.stock
     }
-    console.log(updateProducto)
+    // console.log(updateProducto)
 
     if (!product) return res.status(400).send({ status: "error", error: "El producto no existe" })
     await productsService.updateProducts(pid, updateProducto)

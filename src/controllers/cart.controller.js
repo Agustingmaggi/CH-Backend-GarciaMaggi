@@ -19,44 +19,54 @@ const createCart = async (req, res) => {
 
 //este endpoint agrega un producto 1 sola vez al carrito
 const updateCart = async (req, res) => {
-    const { cartId, productId } = req.params
-    const cart = await cartService.getCart({ _id: cartId })
-    if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" })
-    const product = await productsService.getProduct({ _id: productId })
-    if (!product) return res.status(400).send({ status: "error", error: "Product doesn't exist" })
-    const productExistInCart = cart.products.find(item => {
-        return item.product.toString() === productId
-    })
-    if (productExistInCart) return res.status(400).send({ status: "error", error: "product is already in cart" })
-    cart.products.push({
-        product: productId,
-        added: new Date().toISOString()
-    })
-    await cartService.updateCart(cartId, { products: cart.products })
-    res.send({ status: "success", message: "Product Added" })
+    const { cartId, productId } = req.params;
+    const cart = await cartService.getCart({ _id: cartId });
+
+    if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" });
+
+    const product = await productsService.getProduct({ _id: productId });
+
+    if (!product) return res.status(400).send({ status: "error", error: "Product doesn't exist" });
+
+    let productExistInCart = cart.products.find(item => item.product.toString() === productId);
+
+    if (productExistInCart) {
+        // Si el producto ya existe en el carrito, aumenta la cantidad en uno
+        productExistInCart.quantity += 1;
+    } else {
+        // Si el producto no existe en el carrito, agrégalo con cantidad 1
+        cart.products.push({
+            product: productId,
+            quantity: 1,
+            added: new Date().toISOString()
+        });
+    }
+
+    await cartService.updateCart(cartId, { products: cart.products });
+    res.send({ status: "success", message: "Product Added" });
 }
 
 //este endpoint aumenta la cantidad de un producto ya agregado en un carrito
-const addProdToCart = async (req, res) => {
-    const { productId } = req.params
-    const cart = await cartService.getCart({ _id: req.user.cart })
-    if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" })
-    const product = await productService.getProduct({ _id: productId })
-    if (!product) return res.status(400).send({ status: "error", error: "Product doesn't exist" })
-    const productExistInCart = cart.products.find(item => {
-        return item.product.toString() === productId
-    })
-    if (productExistInCart) {
-        productExistInCart.quantity++
-    } else {
-        cart.products.push({
-            product: productId,
-            added: new Date().toISOString()
-        })
-    }
-    await cartService.updateCart(req.user.cart, { products: cart.products })
-    res.send({ status: "success", message: "Product Added" })
-}
+// const addProdToCart = async (req, res) => {
+//     const { productId } = req.params
+//     const cart = await cartService.getCart({ _id: req.user.cart })
+//     if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" })
+//     const product = await productService.getProduct({ _id: productId })
+//     if (!product) return res.status(400).send({ status: "error", error: "Product doesn't exist" })
+//     const productExistInCart = cart.products.find(item => {
+//         return item.product.toString() === productId
+//     })
+//     if (productExistInCart) {
+//         productExistInCart.quantity++
+//     } else {
+//         cart.products.push({
+//             product: productId,
+//             added: new Date().toISOString()
+//         })
+//     }
+//     await cartService.updateCart(req.user.cart, { products: cart.products })
+//     res.send({ status: "success", message: "Product Added" })
+// }
 
 const ticket = async (req, res) => {
     const cartId = req.params.cid
@@ -76,14 +86,18 @@ const ticket = async (req, res) => {
         const product = await productsService.getProduct(productId);
 
         if (product && product.stock >= quantity) {
+            console.log(`stock previo a la compra: ${product.stock}`)
             // Resta la cantidad comprada del stock del producto
             await productsService.updateProducts(
-                { _id: product._id },
-                { $inc: { stock: -quantity } } // Resta la cantidad del stock
+                { _id: product._id.toString() },
+                { stock: product.stock - quantity }, // Resta la cantidad del stock
             );
+            console.log(`cantidad comprada: ${quantity}`)
+            const nuevoStock = await productsService.getProduct(productId)
+            console.log(`stock luego de la compra: ${nuevoStock.stock}`)
+
             // Agrega el producto al ticket
             // Asegúrate de ajustar los campos del ticket según tu modelo
-
             const generateUniqueCode = () => {
                 // Obtiene la fecha y hora actual en milisegundos
                 const timestamp = new Date().getTime();
@@ -119,4 +133,4 @@ const ticket = async (req, res) => {
     }
 }
 
-export default { getCart, createCart, updateCart, addProdToCart, ticket }
+export default { getCart, createCart, updateCart, ticket }
