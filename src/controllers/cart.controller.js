@@ -67,7 +67,9 @@ const ticket = async (req, res) => {
             productsNotPurchased.push(productId)
         }
     }
+    console.log("Productos que se van a comprar:")
     console.log(productsToPurchase)
+    console.log("Productos que no se pudieron comprar por que hay menos stock del que se queria comprar")
     console.log(productsNotPurchased)
 
     const productsToPurchaseIds = productsToPurchase.map(productInfo => productInfo.product.toString());
@@ -75,6 +77,7 @@ const ticket = async (req, res) => {
     cart.products = cart.products.filter(productInfo => !productsToPurchaseIds.includes(productInfo.product.toString()));
     //actualizamos el carrito eliminando los productos que se van a comprar y dejando los que no se pudieron comprar
     await cartService.updateCart(cartId, { products: cart.products });
+    console.log("Carrito actualizado con los productos que quedaron en el carrito a la espera de que haya mas stock");
     console.log(cart);
 
     //ahora actualizamos el stock en la db de los productos que sí se van a comprar
