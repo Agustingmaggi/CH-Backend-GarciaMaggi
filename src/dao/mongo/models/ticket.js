@@ -19,6 +19,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  products: {
+    type: Array,
+    required: true,
+  }
 });
 
 const ticketModel = mongoose.model(collection, schema);
