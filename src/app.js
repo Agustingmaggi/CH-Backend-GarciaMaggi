@@ -8,6 +8,7 @@ import productsRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.router.js'
 import dictionaryRouter from './routes/dictionary.router.js'
 import sessionsRouter from './routes/SessionsRouter.js'
+import mockingproductsRouter from './routes/mockingproducts.router.js'
 
 import initializeStrategies from './config/passport.config.js'
 import __dirname from './utils.js'
@@ -54,3 +55,4 @@ app.use('/', viewsRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/dictionary', dictionaryRouter)
+app.use('/mockingproducts', mockingproductsRouter)
