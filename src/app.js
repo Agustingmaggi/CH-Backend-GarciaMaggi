@@ -2,6 +2,7 @@ import express from 'express'
 import Handlebars from 'express-handlebars'
 import mongoose from "mongoose"
 import cookieParser from 'cookie-parser'
+import attachLogger from './middlewares/attachLogger.js'
 
 import viewsRouter from './routes/views.router.js'
 import productsRouter from './routes/products.router.js'
@@ -20,6 +21,8 @@ import passport from 'passport'
 import config from './config/config.js'
 
 const app = express()
+
+app.use(attachLogger)
 
 const PORT = config.app.PORT
 app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
@@ -56,3 +59,9 @@ app.use('/api/sessions', sessionsRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/dictionary', dictionaryRouter)
 app.use('/mockingproducts', mockingproductsRouter)
+
+app.use('/loggerTest', attachLogger)
+app.use('/loggerTest', (req, res) => {
+    req.logger.debug('a ver si anda')
+    res.send('mirar consola')
+})

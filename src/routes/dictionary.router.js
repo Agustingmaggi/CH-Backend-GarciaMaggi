@@ -13,7 +13,7 @@ router.get('/:word', async (req, res) => {
 })
 
 router.get('*', (req, res) => {
-    res.status(400).send({ status: "error", error: "Invalid Word" })
+    res.status(400).send({ status: "error", error: "Invalid Word, mira la ruta!" })
 })
 
 export default router
