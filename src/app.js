@@ -22,7 +22,6 @@ import config from './config/config.js'
 
 const app = express()
 
-app.use(attachLogger)
 
 const PORT = config.app.PORT
 app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
@@ -60,8 +59,14 @@ app.use('/api/products', productsRouter)
 app.use('/api/dictionary', dictionaryRouter)
 app.use('/mockingproducts', mockingproductsRouter)
 
-app.use('/loggerTest', attachLogger)
-app.use('/loggerTest', (req, res) => {
+// app.use('/loggerTest', attachLogger)
+app.use(attachLogger)
+app.get('/loggerTest', (req, res) => {
     req.logger.debug('a ver si anda')
+    req.logger.http('a ver si anda')
+    req.logger.info('a ver si anda')
+    req.logger.warning('a ver si anda')
+    req.logger.error('a ver si anda')
+    req.logger.fatal('a ver si anda')
     res.send('mirar consola')
 })

@@ -22,7 +22,7 @@ export default class LoggerService {
                     levels: this.options.levels,
                     transports: [
                         new winston.transports.Console({
-                            level: 'debug'
+                            level: 'info'
                         }),
                     ]
                 })

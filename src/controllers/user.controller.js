@@ -19,6 +19,7 @@ const login = async (req, res) => {
 
     res.cookie(config.jwt.COOKIE, token, { expiresIn: "1d" })
     res.clearCookie('cart')
+    req.logger.info("probando")
     res.sendSuccess('Logged in')
 }
 
