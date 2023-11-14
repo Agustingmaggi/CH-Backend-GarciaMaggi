@@ -15,7 +15,7 @@
             "env": {
                 "PERSISTENCE": "FS",
                 "NODE_MAILER_USER": "",
-                "NODE_MAILER_PASSWORD": ""
+                "NODE_MAILER_PASSWORD": "a ver ahora"
             },
             "restart": true,
             "runtimeExecutable": "nodemon"
