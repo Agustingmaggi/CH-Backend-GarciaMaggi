@@ -13,7 +13,9 @@
             ],
             "program": "${workspaceFolder}\\src\\app.js",
             "env": {
-                "PERSISTENCE": "FS"
+                "PERSISTENCE": "FS",
+                "NODE_MAILER_USER": "",
+                "NODE_MAILER_PASSWORD": ""
             },
             "restart": true,
             "runtimeExecutable": "nodemon"

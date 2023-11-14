@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 
 const getCart = async (req, res) => {
     const cartId = req.params.cartId
-    const cart = await cartService.getCart(cartId)
+    const cart = await cartService.getCart(cartId).populate('products.product') //le agregue el populate para que se vean los productos dentro y no solamente el id de los productos dentro
     if (!cart) return res.status(404).send({ status: "error", error: "Cart not found" })
     res.send({ status: "success", payload: cart })
 }
