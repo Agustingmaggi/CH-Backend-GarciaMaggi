@@ -1,0 +1,72 @@
+paths:
+  /api/products:
+    get: 
+      summary: Devuelve los productos de la db
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos se encontraron satisfactoriamente
+    post:
+      summary: Crea un producto nuevo
+      tags:
+        - Products
+  /api/products/:pid:
+    put:
+      summary: Actualiza un producto segun ID
+      tags: 
+        - Products
+    delete:
+      summary: Elimina el producto segun ID
+      tags:
+        - Products
+  /api/cart/:cartId:
+    get: 
+      summary: Devuelve un carrito segun ID
+      tags:
+        - Cart
+      responses:
+        "200":
+          description: El carrito fue encontrado satisfactoriamente
+    post:
+      summary: Crea un producto nuevo
+      tags:
+        - Cart
+  /api/cart/:cartId/products/:productId:
+    put:
+      summary: Inserta un producto en un carrito segun ID del carrito e ID del producto
+      tags: 
+        - Cart
+    post:
+      summary: Crea un ticket de compra del carrito segun su ID
+      tags:
+        - Cart
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id del producto
+        title:
+          type: string
+          description: Nombre del producto
+        categories:
+          type: string
+          description: A que categoria de productos pertenece
+        stock:
+          type: number
+          description: cantidad actual del stock disponible para la venta/compra
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id del carrito
+        products:
+          type: array
+          description: Array de los productos que contiene este carrito
+
+        

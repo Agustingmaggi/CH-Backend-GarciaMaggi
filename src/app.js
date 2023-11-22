@@ -3,6 +3,8 @@ import Handlebars from 'express-handlebars'
 import mongoose from "mongoose"
 import cookieParser from 'cookie-parser'
 import attachLogger from './middlewares/attachLogger.js'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUIExpress from 'swagger-ui-express'
 
 import viewsRouter from './routes/views.router.js'
 import productsRouter from './routes/products.router.js'
@@ -27,6 +29,20 @@ const PORT = config.app.PORT
 app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
 
 const connection = mongoose.connect(config.mongo.URL)
+
+const swaggerSpecOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: "Supermercado docs",
+            description: 'replica de supermercado digital'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yml`]
+}
+
+const swaggerSpec = swaggerJSDoc(swaggerSpecOptions)
+app.use('/apidocs', swaggerUIExpress.serve, swaggerUIExpress.setup(swaggerSpec))
 
 app.engine('handlebars', Handlebars.engine())
 app.set('views', `${__dirname}/views`)
