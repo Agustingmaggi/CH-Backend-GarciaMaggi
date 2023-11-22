@@ -1,7 +1,18 @@
 import jwt from 'jsonwebtoken'
 import config from "../config/config.js";
+import MailerService from '../services/MailerService.js';
+import DMailTemplates from '../constants/DMailTemplates.js';
+import { userService } from '../services/index.js';
+import authService from '../services/auth.js'
 
 const register = async (req, res) => {
+    try {
+        const mailService = new MailerService()
+        const result = await mailService.sendMail([req.user.email], DMailTemplates.WELCOME, { user: req.user })
+    } catch (error) {
+        console.log(`fallo envio de correo para ${req.user.email}`)
+    }
+
     res.clearCookie('cart')
     res.sendSuccess('Registered');
 }
@@ -19,7 +30,7 @@ const login = async (req, res) => {
 
     res.cookie(config.jwt.COOKIE, token, { expiresIn: "1d" })
     res.clearCookie('cart')
-    req.logger.info("probando")
+    // req.logger.info("probando")
     res.sendSuccess('Logged in')
 }
 
@@ -27,4 +38,45 @@ const current = async (req, res) => {
     res.sendSuccessWithPayload(req.user)
 }
 
-export default { register, login, current }
+const changeToPremium = async (req, res) => {
+    const { uid } = req.params
+    // const user =await SessionRepository.getBy({_id:uid})
+    const updateUser = { role: 'premium' }
+    await userService.updateUser(uid, updateUser)
+    res.send({ status: "success", message: "cambiaste el rol del usuario a premium" })
+}
+
+const password = async (req, res) => {
+    const { email } = req.body
+    const user = await userService.getBy({ email })
+    if (!user) return res.sendBadRequest('User doesnt exist')
+    const token = jwt.sign({ email }, config.jwt.SECRET, { expiresIn: 30 })
+    const mailerService = new MailerService()
+    const result = await mailerService.sendMail([email], DMailTemplates.PASSWORD, { token })
+    res.sendSuccess('email sent')
+}
+
+const restorePassword = async (req, res) => {
+    const { newPassword, token } = req.body
+    if (!newPassword || !token) return res.sendBadRequest('Incomplete values')
+    try {
+        const { email } = jwt.verify(token, config.jwt.SECRET)
+        // console.log(email)
+        const user = await userService.getBy({ email })
+        // console.log(user)
+        if (!user) return res.sendBadRequest("User doesnt exist")
+        const isSamePassword = await authService.validatePassword(newPassword, user.password)
+        if (isSamePassword) return res.sendBadRequest('New password cant be equal to old one')
+        const hashNewPassword = await authService.createHash(newPassword)
+        await userService.updateUser(user._id, { password: hashNewPassword })
+        //TODO ESTE CODIGO FUNCIONA SOLO SI APRETAS ENTER (Y NO CLICK EN EL BOTON DE ENVIAR) EN LA VISTA DE PONER TU NUEVA CONTRA
+        res.sendSuccess()
+        //    console.log("Por mas de que tire error de jwt vencido y de que no se puede setear headers despues de enviarselos al cliente, sí cambia la contrasenia del usuario")
+
+    } catch (error) {
+        console.log(error)
+        res.sendBadRequest('Invalid token')
+    }
+}
+
+export default { register, login, current, changeToPremium, password, restorePassword }

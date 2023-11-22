@@ -5,9 +5,12 @@ import userController from "../controllers/user.controller.js";
 
 class SessionsRouter extends BaseRouter {
     init() {
+        this.get('/current', ['PUBLIC'], userController.current)
         this.post('/register', ['NO_AUTH'], passportCall('register', { strategyType: 'LOCALS' }), userController.register)
         this.post('/login', ['NO_AUTH'], passportCall('login', { strategyType: 'LOCALS' }), userController.login)
-        this.get('/current', ['PUBLIC'], userController.current)
+        this.post('/premium/:uid', ['PUBLIC'], userController.changeToPremium)
+        this.post('/password', ['PUBLIC'], userController.password)
+        this.put('/password-restore', ['PUBLIC'], userController.restorePassword)
     }
 }
 

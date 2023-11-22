@@ -1,6 +1,6 @@
 import { cartService } from "../services/index.js"
 import { productsService } from "../services/index.js"
-import { ticketsService } from '../services/index.js'
+// import { ticketsService } from '../services/index.js'
 import { userService } from "../services/index.js"
 
 import mongoose from 'mongoose';

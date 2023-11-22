@@ -14,8 +14,8 @@
             "program": "${workspaceFolder}\\src\\app.js",
             "env": {
                 "PERSISTENCE": "FS",
-                "NODE_MAILER_USER": "",
-                "NODE_MAILER_PASSWORD": "a"
+                "NODE_MAILER_USER": "agustingarciamaggi1@gmail.com",
+                "NODE_MAILER_PASSWORD": "cskg qidx ondb gjqh"
             },
             "restart": true,
             "runtimeExecutable": "nodemon"

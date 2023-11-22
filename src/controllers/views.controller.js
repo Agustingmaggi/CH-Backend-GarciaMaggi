@@ -1,5 +1,7 @@
-// import {viewsService} from "../services/views.js"
+// import { viewsService } from "../services/views.js"
 import productModel from '../dao/mongo/models/products.js';
+import jwt from 'jsonwebtoken'
+import config from '../config/config.js'
 
 const home = async (req, res) => {
     const { page = 1 } = req.query
@@ -39,4 +41,19 @@ const carrito = async (req, res) => {
     console.log(cart)
 }
 
-export default { home, register, login, profile, carrito }
+const passwordRestore = async (req, res) => {
+    const { token } = req.query
+    if (!token) return res.render('RestorePasswordError', { error: 'Ruta invalida' })
+    try {
+        jwt.verify(token, config.jwt.SECRET)
+        res.render('PasswordRestore')
+    } catch (error) {
+        console.log(error)
+        if (error.expiredAt) {
+            return res.render('RestorePasswordError', { error: 'El link de este correo expiro, solicita uno nuevo' })
+        }
+        res.render('RestorePasswordError', { error: 'link invalido, crea uno nuevo' })
+    }
+}
+
+export default { home, register, login, profile, carrito, passwordRestore }

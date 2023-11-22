@@ -10,8 +10,9 @@ export default class userDao {
         return userModel.findOne(param).lean()
     }
 
-    create = (user) => {
-        return userModel.create(user)
+    create = async (user) => {
+        const result = await userModel.create(user)
+        return result.toObject()
     }
 
     updateUser = (id, user) => {
