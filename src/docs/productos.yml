@@ -7,6 +7,18 @@ paths:
       responses:
         "200":
           description: Los productos se encontraron satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: status de la operacion
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#components/schemas/Product"
     post:
       summary: Crea un producto nuevo
       tags:
