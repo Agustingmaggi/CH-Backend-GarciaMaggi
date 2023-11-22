@@ -1,0 +1,34 @@
+paths:
+  /api/cart/:cartId:
+    get: 
+      summary: Devuelve un carrito segun ID
+      tags:
+        - Cart
+      responses:
+        "200":
+          description: El carrito fue encontrado satisfactoriamente
+    post:
+      summary: Crea un producto nuevo
+      tags:
+        - Cart
+  /api/cart/:cartId/products/:productId:
+    put:
+      summary: Inserta un producto en un carrito segun ID del carrito e ID del producto
+      tags: 
+        - Cart
+    post:
+      summary: Crea un ticket de compra del carrito segun su ID
+      tags:
+        - Cart
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id del carrito
+        products:
+          type: array
+          description: Array de los productos que contiene este carrito
