@@ -1,6 +1,6 @@
 import { cartService } from "../services/index.js"
 import { productsService } from "../services/index.js"
-// import { ticketsService } from '../services/index.js'
+import { ticketsService } from '../services/index.js'
 import { userService } from "../services/index.js"
 
 import mongoose from 'mongoose';
@@ -18,8 +18,10 @@ const createCart = async (req, res) => {
 }
 
 const updateCart = async (req, res) => {
-    const { cartId, productId } = req.params;
-    const cart = await cartService.getCart({ _id: cartId });
+
+    const productId = req.body.pid
+    const cartId = req.user.cart
+    const cart = await cartService.getCart({ _id: req.user.cart });
 
     if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" });
 

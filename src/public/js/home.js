@@ -1,14 +1,25 @@
 async function addProduct(id) {
     const cart = getCookie('cart')
+    const product = {
+        pid: id
+    }
     if (cart) {
-        const response = await fetch(`api/cart/${cart}/products/${id}`, {
-            method: 'PUT'
+        const response = await fetch(`api/cart/products`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
         })
         const result = await response.json()
         console.log(result)
     } else {
-        const response = await fetch(`/api/cart/products/${id}`, {
-            method: 'PUT'
+        const response = await fetch(`api/cart/products`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
         })
         const result = await response.json()
         console.log(result)

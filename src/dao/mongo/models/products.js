@@ -19,11 +19,16 @@ const schema = new mongoose.Schema({
     },
     images: {
         type: Array,
-        required: true
+        required: false
     },
     stock: {
         type: Number,
         required: true,
+    },
+    owner: {
+        type: String,
+        required: true,
+        default: 'admin'
     }
 }, { timestamps: true })
 

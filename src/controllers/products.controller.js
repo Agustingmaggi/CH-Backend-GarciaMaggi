@@ -2,16 +2,7 @@ import { productsService } from "../services/index.js"
 
 const getProducts = async (req, res) => {
     try {
-        // const { limit = 10, page = 1 } = req.query;
-
-        // const options = {
-        //     limit: parseInt(limit),
-        //     page: parseInt(page)
-        // };
-
         const result = await productsService.getProducts();
-
-
         res.send({ status: "success", payload: result });
     } catch (error) {
         console.error(error);
@@ -23,20 +14,24 @@ const createProducts = async (req, res) => {
         title,
         categories,
         price,
-        stock
+        stock,
+        owner
     } = req.body
-    if (!title || !categories || !price || !stock) return res.status(400).send({ status: "error", error: "Incomplete Files" })
+    if (!title || !price || !stock) return res.status(400).send({ status: "error", error: "Incomplete Files" })
     const newProduct = {
         title,
         categories,
         price,
-        stock
+        stock,
+        owner
     }
-    // const images = req.files.map(file => `${req.protocol}://${req.hostname}:${process.env.PORT || 8080}/img/${file.filename}`)
-    // newProduct.images = images
-
-    const result = await productsService.createProducts(newProduct)
-    res.send({ status: "success", payload: result._id })
+    if (req.user.role == 'premium') {
+        newProduct.owner = req.user.id
+        const result = await productsService.createProducts(newProduct)
+        res.send({ status: "success", payload: "producto creado con un owner premium" })
+    } else {
+        res.send({ staus: "error", message: "solo usuarios premium pueden crear productos" })
+    }
 }
 
 const updateProduct = async (req, res) => {
@@ -57,10 +52,15 @@ const updateProduct = async (req, res) => {
 }
 
 const deleteProducts = async (req, res) => {
-    const { pid } = req.params
-    const result = await productsService.deleteProduct(pid)
-    console.log(result)
-    res.send({ status: "success", message: "Producto eliminado" })
+    const { pid } = req.body
+    const product = await productsService.getProduct({ _id: pid })
+    if (req.user.role == 'premium' && product.owner == req.user.id) {
+        const result = await productsService.deleteProduct(pid)
+        res.send({ status: "success", message: "Producto eliminado porque sos el owner" })
+    } else if (req.user.role == 'admin') {
+        const result = await productsService.deleteProduct(pid)
+        res.send({ status: "success", message: "Producto eliminado porque sos admin" })
+    }
 }
 
 

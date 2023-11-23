@@ -7,7 +7,7 @@ class ProductRouter extends BaseRouter {
         this.get('/', ['PUBLIC'], productsController.getProducts);
         this.post('/', ['PUBLIC'], uploader.array('images'), productsController.createProducts)
         this.put('/:pid', ['PUBLIC'], productsController.updateProduct)
-        this.delete('/:pid', productsController.deleteProducts)
+        this.delete('/', ['PUBLIC'], productsController.deleteProducts)
     }
 }
 

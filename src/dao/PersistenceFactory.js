@@ -28,12 +28,12 @@ export default class PersistenceFactory {
                 ProductsDao = (await import('./mongo/managers/productsDao.js')).default;
                 CartsDao = (await import('./mongo/managers/cartsDao.js')).default;
                 UsersDao = (await import('./mongo/managers/UserDao.js')).default;
-                // TicketsDao = (await import('./mongo/managers/ticketsDao.js')).default;
+                TicketsDao = (await import('./mongo/managers/ticketsDao.js')).default;
                 break;
             }
         }
         return {
-            ProductsDao, CartsDao, UsersDao
+            ProductsDao, CartsDao, UsersDao, TicketsDao
         }
     }
 

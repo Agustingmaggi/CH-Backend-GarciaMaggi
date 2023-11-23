@@ -2,6 +2,7 @@
 import productModel from '../dao/mongo/models/products.js';
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
+import { cartService } from '../services/index.js'
 
 const home = async (req, res) => {
     const { page = 1 } = req.query
@@ -36,9 +37,9 @@ const profile = async (req, res) => {
 
 const carrito = async (req, res) => {
     const cartId = req.user.cart
-    const cart = await cartManager.getCart(cartId, { populate: true })
+    const cart = await cartService.getCart(cartId).populate('products.product')
     res.render('Carrito', { cart })
-    console.log(cart)
+    console.log(cart.products)
 }
 
 const passwordRestore = async (req, res) => {
