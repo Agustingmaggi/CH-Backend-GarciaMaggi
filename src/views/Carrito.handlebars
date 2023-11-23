@@ -2,8 +2,8 @@
 <a href="/">Inicio</a>
 <br><br><br>
 
-{{#if cart.products.length}}
-{{#each cart.products}}
+{{#if products.length}}
+{{#each products}}
 <div class="producto">
     <p>{{this.product.title}}</p>
     <p>Cantidad: {{this.quantity}}</p>
