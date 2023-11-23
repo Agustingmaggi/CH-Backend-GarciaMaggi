@@ -37,10 +37,10 @@ const profile = async (req, res) => {
 
 const carrito = async (req, res) => {
     const cartId = req.user.cart
-    const cart = await cartService.getCart(cartId).populate('products.product')
+    const cart = await cartService.getCart(cartId).populate('products.product').lean()
     const products = cart.products
-    res.render('Carrito', { products })
-    console.log(products)
+    res.render('Carrito', { products: products })
+    // console.log(products)
 }
 
 const passwordRestore = async (req, res) => {

@@ -29,24 +29,26 @@ const updateCart = async (req, res) => {
 
     if (!product) return res.status(400).send({ status: "error", error: "Product doesn't exist" });
 
-    let productExistInCart = cart.products.find(item => item.product.toString() === productId);
+    if (product.owner != req.user.id) {
+        let productExistInCart = cart.products.find(item => item.product.toString() === productId);
+        if (productExistInCart) {
+            // Si el producto ya existe en el carrito, aumenta la cantidad en uno
+            productExistInCart.quantity += 1;
+        } else {
+            // Si el producto no existe en el carrito, agrégalo con cantidad 1
+            cart.products.push({
+                product: productId,
+                quantity: 1,
+                added: new Date().toISOString()
+            });
+        }
 
-    if (productExistInCart) {
-        // Si el producto ya existe en el carrito, aumenta la cantidad en uno
-        productExistInCart.quantity += 1;
+        await cartService.updateCart(cartId, { products: cart.products });
+        res.send({ status: "success", message: "Product Added" });
     } else {
-        // Si el producto no existe en el carrito, agrégalo con cantidad 1
-        cart.products.push({
-            product: productId,
-            quantity: 1,
-            added: new Date().toISOString()
-        });
+        res.send({ status: "error", error: "no podes agregar productos tuyos a tu carrito" })
     }
-
-    await cartService.updateCart(cartId, { products: cart.products });
-    res.send({ status: "success", message: "Product Added" });
 }
-
 const ticket = async (req, res) => {
     const cartId = req.params.cid
     const cart = await cartService.getCart(cartId) // Obtén el carrito asociado al cartId
