@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import userManager from "../../../dao/mongo/managers/UserDao.js";
 import { strict as assert } from 'assert'
+import config from "../../../config/config.js";
 
-mongoose.connect(`mongodb+srv://agustingmaggi:Agustin011235@cluster0.ewlnbwy.mongodb.net/test?retryWrites=true&w=majority`)
+mongoose.connect(config.mongo.URL)
 
 describe('Test unitarios para DAO de usuarios', function () {
 
@@ -12,7 +13,7 @@ describe('Test unitarios para DAO de usuarios', function () {
         this.users = new userManager()
     })
 
-    before(function () {
+    after(function () {
         mongoose.connection.collections.users.drop()
         console.log('colection eliminada para la sig prueba')
     })
