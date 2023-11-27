@@ -13,7 +13,7 @@
             ],
             "program": "${workspaceFolder}\\src\\app.js",
             "env": {
-                "PERSISTENCE": "FS",
+                "PERSISTENCE": "MONGO",
                 "NODE_MAILER_USER": "agustingarciamaggi1@gmail.com",
                 "NODE_MAILER_PASSWORD": "cskg qidx ondb gjqh"
             },
