@@ -4,6 +4,7 @@ import MailerService from '../services/MailerService.js';
 import DMailTemplates from '../constants/DMailTemplates.js';
 import { userService } from '../services/index.js';
 import authService from '../services/auth.js'
+import CloudStorageService from "../services/CloudStorageService.js";
 
 const register = async (req, res) => {
     try {
@@ -40,11 +41,27 @@ const current = async (req, res) => {
 
 const changeToPremium = async (req, res) => {
     const { uid } = req.params
-    // const user =await SessionRepository.getBy({_id:uid})
-    const updateUser = { role: 'premium' }
-    await userService.updateUser(uid, updateUser)
-    res.send({ status: "success", message: "cambiaste el rol del usuario a premium" })
-}
+    const requiredDocuments = ['Identificacion.jpeg', 'Comprobante de domicilio.jpeg', 'Comprobante de estado de cuenta.jpeg'];
+    try {
+        const user = await userService.getBy({ _id: uid })
+
+        const documentsLoaded = user.documents.every(document =>
+            requiredDocuments.includes(document.name)
+        );
+        if (documentsLoaded) {
+            const updateUser = { role: 'premium' }
+            await userService.updateUser(uid, updateUser)
+            res.send({ status: "success", message: "cambiaste el rol del usuario a premium" })
+        } else {
+            res.status(400).send({
+                status: 'error',
+                message: 'El usuario no ha cargado todos los documentos requeridos'
+            });
+        }
+    } catch (error) {
+        res.status(500).send({ status: 'error', message: 'Error al cambiar a premium', error });
+    }
+};
 
 const password = async (req, res) => {
     const { email } = req.body
@@ -77,6 +94,41 @@ const restorePassword = async (req, res) => {
         console.log(error)
         res.sendBadRequest('Invalid token')
     }
+
+}
+const google = async (req, res) => {
+    const tokenizedUser = {
+        name: `${req.user.firstName} ${req.user.lastName}`,
+        id: req.user._id,
+        role: req.user.role,
+        email: req.user.email,
+        cart: req.user.cart
+    }
+
+    const token = jwt.sign(tokenizedUser, config.jwt.SECRET, { expiresIn: '1d' })
+
+    res.cookie(config.jwt.COOKIE, token, { expiresIn: "1d" })
+    res.clearCookie('cart')
+    // req.logger.info("probando")
+    res.redirect('/')
+    // res.sendStatus(200) // si pones esto te tira error de headers porque no pods enviar un status despues
 }
 
-export default { register, login, current, changeToPremium, password, restorePassword }
+const subirDocs = async (req, res) => {
+    const googleStorageService = new CloudStorageService()
+    const documents = []
+    // console.log(req.files)
+    for (const file of req.files) {
+        const url = await googleStorageService.uploadFileToCloudStorage(file)
+        const document = {
+            name: file.originalname, // Puedes cambiar 'originalname' por el campo que contiene el nombre del archivo
+            reference: url
+        }
+        documents.push(document)
+    }
+    const uid = req.params.uid
+    const user = await userService.updateUser({ _id: uid }, { documents: documents })
+    res.send({ status: 'success', payload: user })
+}
+
+export default { register, login, current, changeToPremium, password, restorePassword, google, subirDocs }

@@ -7,6 +7,8 @@ import GithubStrategy from 'passport-github2'
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
 import { cookieExtractor } from '../utils.js'
 import config from './config.js'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import { userService } from '../services/index.js'
 
 const LocalStrategy = local.Strategy
 const usersService = new UserManager()
@@ -80,6 +82,35 @@ const initializeStrategies = () => {
                 return done(error)
             }
         }))
+
+    passport.use('google', new GoogleStrategy({
+        clientID: '81040027490-l6v0v24auahccs6299i2pc8kmrbthjuf.apps.googleusercontent.com',
+        clientSecret: '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',
+        callbackURL: 'http://localhost:8080/api/sessions/googlecallback',
+        passReqToCallback: true
+    }, async (req, accessToken, refreshToken, profile, done) => {
+        const { _json } = profile
+        const user = await userService.getBy({ email: _json.email })
+        if (user) {
+            return done(null, user)
+        } else {
+            const newUser = {
+                firstName: _json.given_name,
+                lastName: _json.family_name,
+                email: _json.email
+            }
+
+            let cart
+            if (req.cookies['cart']) {
+                cart = req.cookies['cart']
+            } else {
+                cartResult = await cartService.createCart
+                cart = cartResult._id
+            }
+            const result = await userService.createUser(newUser)
+            done(null, result)
+        }
+    }))
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),

@@ -1,3 +1,4 @@
+import CloudStorageService from "../services/CloudStorageService.js";
 import { productsService } from "../services/index.js"
 
 const getProducts = async (req, res) => {
@@ -25,13 +26,24 @@ const createProducts = async (req, res) => {
         stock,
         owner
     }
-    if (req.user.role == 'premium') {
-        newProduct.owner = req.user.id
-        const result = await productsService.createProducts(newProduct)
-        res.send({ status: "success", payload: "producto creado con un owner premium" })
-    } else {
-        res.send({ staus: "error", message: "solo usuarios premium pueden crear productos" })
+
+    const googleStorageService = new CloudStorageService()
+    const images = []
+    console.log(req.files)
+    for (const file of req.files) {
+        const url = await googleStorageService.uploadFileToCloudStorage(file)
+        images.push(url)
     }
+
+    newProduct.images = images
+    // if (req.user.role == 'premium') {
+    // newProduct.owner = req.user.id
+    const result = await productsService.createProducts(newProduct)
+    // res.send({ status: "success", payload: "producto creado con un owner premium" })
+    // } else {
+    //     res.send({ staus: "error", message: "solo usuarios premium pueden crear productos" })
+    // }
+    res.send({ status: 'success', payload: result._id })
 }
 
 const updateProduct = async (req, res) => {
