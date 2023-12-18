@@ -23,7 +23,9 @@ export default {
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
         PERSISTENCE: process.env.PERSISTENCE || 'MONGO',
         GOOGLEID: process.env.CLIENTID,
-        GOOGLESECRET: process.env.CLIENTSECRET
+        GOOGLESECRET: process.env.CLIENTSECRET,
+        CLIENTIDGITHUB: process.env.CLIENTIDGITHUB,
+        CLIENTSECRETGITHUB: process.env.CLIENTSECRETGITHUB
     },
     mongo: {
         URL: process.env.MONGO_URL || 'localhost:27017'
