@@ -140,6 +140,35 @@ const initializeStrategies = () => {
         }
     }))
 
+    passport.use('google', new GoogleStrategy({
+        clientID: config.app.GOOGLEID,
+        clientSecret: config.app.GOOGLESECRET,
+        callbackURL: 'http://localhost:8080/api/sessions/googlecallback',
+        passReqToCallback: true
+    }, async (req, accessToken, refreshToken, profile, done) => {
+        const { _json } = profile
+        const user = await userService.getBy({ email: _json.email })
+        if (user) {
+            return done(null, user)
+        } else {
+            const newUser = {
+                firstName: _json.given_name,
+                lastName: _json.family_name,
+                email: _json.email
+            }
+
+            let cart
+            if (req.cookies['cart']) {
+                cart = req.cookies['cart']
+            } else {
+                cartResult = await cartService.createCart
+                cart = cartResult._id
+            }
+            const result = await userService.createUser(newUser)
+            done(null, result)
+        }
+    }))
+
     passport.serializeUser((user, done) => {
         return done(null, user._id)
     })

@@ -34,6 +34,9 @@ function getCookie(name) {
 
 const logoutButton = document.getElementById('logoutButton')
 logoutButton.addEventListener('click', (event) => {
+    console.log('boton de logout clickeado')
+    const authCookieValue = getCookie('authCookie');
+    console.log(authCookieValue)
     event.preventDefault()
     document.cookie = 'authCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     window.location.href = '/login'

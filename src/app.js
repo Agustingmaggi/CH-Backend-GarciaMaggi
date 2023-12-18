@@ -12,6 +12,7 @@ import cartRouter from './routes/cart.router.js'
 import dictionaryRouter from './routes/dictionary.router.js'
 import sessionsRouter from './routes/SessionsRouter.js'
 import mockingproductsRouter from './routes/mockingproducts.router.js'
+import usersRouter from './routes/usersRouter.js'
 
 import initializeStrategies from './config/passport.config.js'
 import __dirname from './utils.js'
@@ -26,7 +27,7 @@ const app = express()
 
 
 const PORT = config.app.PORT
-app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
+app.listen(PORT, () => console.log(`CAMBIAR LO DE PUBLIC DE RUTAS listening on http://localhost:${PORT}`))
 
 const connection = mongoose.connect(config.mongo.URL)
 
@@ -71,6 +72,7 @@ app.use(passport.initialize())
 app.use('/api/cart', cartRouter);
 app.use('/', viewsRouter)
 app.use('/api/sessions', sessionsRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/dictionary', dictionaryRouter)
 app.use('/mockingproducts', mockingproductsRouter)
