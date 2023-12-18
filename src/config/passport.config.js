@@ -80,6 +80,7 @@ const initializeStrategies = () => {
                 return done(error)
             }
         }))
+    //probando
 
     passport.use('google', new GoogleStrategy({
         clientID: config.app.GOOGLEID,
