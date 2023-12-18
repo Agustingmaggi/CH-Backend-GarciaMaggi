@@ -1,16 +1,14 @@
 import passport from 'passport'
 import local from 'passport-local'
-import UserManager from "../dao/mongo/managers/UserDao.js"
-import CartManager from '../dao/mongo/managers/cartsDao.js'
 import auth from "../services/auth.js"
 import GithubStrategy from 'passport-github2'
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt'
 import { cookieExtractor } from '../utils.js'
 import config from './config.js'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import { userService } from '../services/index.js'
 
 const LocalStrategy = local.Strategy
-const usersService = new UserManager()
-const cartService = new CartManager
 
 const initializeStrategies = () => {
     passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email', session: false },
@@ -137,35 +135,6 @@ const initializeStrategies = () => {
             done(null, result)
         } else {
             done(null, user)
-        }
-    }))
-
-    passport.use('google', new GoogleStrategy({
-        clientID: config.app.GOOGLEID,
-        clientSecret: config.app.GOOGLESECRET,
-        callbackURL: 'http://localhost:8080/api/sessions/googlecallback',
-        passReqToCallback: true
-    }, async (req, accessToken, refreshToken, profile, done) => {
-        const { _json } = profile
-        const user = await userService.getBy({ email: _json.email })
-        if (user) {
-            return done(null, user)
-        } else {
-            const newUser = {
-                firstName: _json.given_name,
-                lastName: _json.family_name,
-                email: _json.email
-            }
-
-            let cart
-            if (req.cookies['cart']) {
-                cart = req.cookies['cart']
-            } else {
-                cartResult = await cartService.createCart
-                cart = cartResult._id
-            }
-            const result = await userService.createUser(newUser)
-            done(null, result)
         }
     }))
 
