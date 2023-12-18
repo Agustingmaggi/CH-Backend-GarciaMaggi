@@ -4,7 +4,7 @@ import __dirname from "../utils.js"
 export default class CloudStorageService {
     constructor() {
         this.storage = new Storage({
-            keyFilename: `${__dirname}/../molten-optics-406215-7b2e2dfc7ee3.json`
+            keyFilename: `${__dirname}/../molten-optics-406215-5f669e81e6a4.json`
         })
         this.bucket = 'curso_backend'
     }

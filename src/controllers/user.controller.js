@@ -121,7 +121,7 @@ const subirDocs = async (req, res) => {
     for (const file of req.files) {
         const url = await googleStorageService.uploadFileToCloudStorage(file)
         const document = {
-            name: file.originalname, // Puedes cambiar 'originalname' por el campo que contiene el nombre del archivo
+            name: file.originalname,
             reference: url
         }
         documents.push(document)
