@@ -21,8 +21,11 @@ const updateCart = async (req, res) => {
 
     const productId = req.body.pid
     const cartId = req.user.cart
+    const userId = req.user.id
     const cart = await cartService.getCart({ _id: req.user.cart });
 
+    console.log(cartId)
+    if (!userId) return res.status(400).send({ status: 'error', error: 'Tenes que logearte para agregar al carrito' })
     if (!cart) return res.status(400).send({ status: "error", error: "Cart doesn't exist" });
 
     const product = await productsService.getProduct({ _id: productId });
