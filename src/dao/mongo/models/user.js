@@ -2,6 +2,18 @@ import mongoose from "mongoose"
 
 const collection = "Users"
 
+const productSubschema = new mongoose.Schema({
+    product: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'products'
+    },
+    added: Date,
+    quantity: {
+        type: Number,
+        default: 1
+    }
+}, { _id: false })
+
 const schema = new mongoose.Schema({
     firstName: String,
     lastName: String,

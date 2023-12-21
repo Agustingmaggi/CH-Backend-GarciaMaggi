@@ -1,0 +1,13 @@
+<div>
+    <h1>
+        hola {{user.name}}
+    </h1>
+    <h2>
+        Compraste estos productos:
+        <ul>
+            {{#each productos.products}}
+            <li>Producto: {{this.productId}} - Cantidad: {{this.quantity}}</li>
+            {{/each}}
+        </ul>
+    </h2>
+</div>

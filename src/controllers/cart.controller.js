@@ -2,8 +2,8 @@ import { cartService } from "../services/index.js"
 import { productsService } from "../services/index.js"
 import { ticketsService } from '../services/index.js'
 import { userService } from "../services/index.js"
-
-import mongoose from 'mongoose';
+import MailerService from '../services/MailerService.js';
+import DMailTemplates from '../constants/DMailTemplates.js';
 
 const getCart = async (req, res) => {
     const cartId = req.params.cartId
@@ -50,16 +50,16 @@ const updateCart = async (req, res) => {
     }
 }
 const ticket = async (req, res) => {
-    const cartId = req.params.cid
-    const cart = await cartService.getCart(cartId) // Obtén el carrito asociado al cartId
+    const userId = req.user.id
+    const user = await userService.getBy({ _id: userId })
+    const cartString = user.cart.toString()
+    const cartObject = await cartService.getCart(cartString)
+    // console.log(cartObject)
 
-    const allUsers = await userService.get()
-    const cartObjectId = new mongoose.Types.ObjectId(cartId);
-    const userWithMatchingCart = allUsers.find(user => user.cart.equals(cartObjectId));
 
     const productsToPurchase = [];
     const productsNotPurchased = [];
-    for (const productInfo of cart.products) {
+    for (const productInfo of cartObject.products) {
         const productId = productInfo.product
         const quantity = productInfo.quantity
 
@@ -71,19 +71,32 @@ const ticket = async (req, res) => {
             productsNotPurchased.push(productId)
         }
     }
-    console.log("Productos que se van a comprar:")
-    console.log(productsToPurchase)
-    console.log("Productos que no se pudieron comprar por que hay menos stock del que se queria comprar")
-    console.log(productsNotPurchased)
+    // console.log("Productos que se van a comprar:")
+    // console.log(productsToPurchase)
+    // console.log("Productos que no se pudieron comprar por que hay menos stock del que se queria comprar")
+    // console.log(productsNotPurchased)
 
     const productsToPurchaseIds = productsToPurchase.map(productInfo => productInfo.product.toString());
     // Filtra los productos que no deben eliminarse del carrito
-    cart.products = cart.products.filter(productInfo => !productsToPurchaseIds.includes(productInfo.product.toString()));
+    cartObject.products = cartObject.products.filter(productInfo => !productsToPurchaseIds.includes(productInfo.product.toString()));
     //actualizamos el carrito eliminando los productos que se van a comprar y dejando los que no se pudieron comprar
-    await cartService.updateCart(cartId, { products: cart.products });
-    console.log("Carrito actualizado con los productos que quedaron en el carrito a la espera de que haya mas stock");
-    console.log(cart);
+    await cartService.updateCart(cartString, { products: cartObject.products });
+    // console.log("Carrito actualizado con los productos que quedaron en el carrito a la espera de que haya mas stock");
+    // console.log(cart);
 
+    const generateUniqueCode = () => {
+        // Obtiene la fecha y hora actual en milisegundos y genera un código único concatenando la fecha actual y un número aleatorio
+        const timestamp = new Date().getTime();
+        return `CODE-${timestamp}-${Math.floor(Math.random() * 10000)}`;
+    };
+
+    const ticketData = {
+        code: generateUniqueCode() || 1,
+        purchase_datetime: new Date(),
+        amount: 0,
+        purchaser: user ? user.email : "usuario de prueba",
+        products: [] // Array para almacenar todos los productos comprados
+    };
     //ahora actualizamos el stock en la db de los productos que sí se van a comprar
     for (const productInfo of productsToPurchase) {
         const productId = productInfo.product;
@@ -95,24 +108,25 @@ const ticket = async (req, res) => {
             { _id: product._id.toString() },
             { stock: product.stock - quantity }, // Resta la cantidad del stock
         );
+        ticketData.products.push({
+            productId: product._id,
+            productName: product.name,
+            quantity: quantity,
+            subtotal: product.price * quantity
+        });
+        ticketData.amount += product.price * quantity;
 
-
-        const generateUniqueCode = () => {
-            // Obtiene la fecha y hora actual en milisegundos y genera un código único concatenando la fecha actual y un número aleatorio
-            const timestamp = new Date().getTime();
-            return `CODE-${timestamp}-${Math.floor(Math.random() * 10000)}`;
-        };
-
-        const ticketData = {
-            code: generateUniqueCode() || 1, // Genera un código único para el ticket
-            purchase_datetime: new Date(),
-            amount: product.price * quantity,
-            purchaser: userWithMatchingCart ? userWithMatchingCart.email : "usuario de prueba",
-            products: [productInfo]
-        };
-
-        // Crea un nuevo ticket y guárdalo en la base de datos utilizando el servicio de tickets
-        await ticketsService.createTicket(ticketData);
+    }
+    const ticketNuevo = await ticketsService.createTicket(ticketData);
+    const ticket = await ticketsService.getTicket(ticketNuevo)
+    // Crea un nuevo ticket y guárdalo en la base de datos utilizando el servicio de tickets
+    if (ticketNuevo) {
+        try {
+            const mailService = new MailerService()
+            const result = await mailService.sendMail([req.user.email], DMailTemplates.TICKET, { user: req.user, productos: ticket })
+        } catch (error) {
+            console.log(`fallo envio de correo para ${req.user.email}`, error)
+        }
     }
 
     if (productsNotPurchased.length === 0) {

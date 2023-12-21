@@ -1,5 +1,7 @@
 import CloudStorageService from "../services/CloudStorageService.js";
-import { productsService } from "../services/index.js"
+import { productsService, userService } from "../services/index.js"
+import MailerService from '../services/MailerService.js';
+import DMailTemplates from '../constants/DMailTemplates.js';
 
 const getProducts = async (req, res) => {
     try {
@@ -29,21 +31,19 @@ const createProducts = async (req, res) => {
 
     const googleStorageService = new CloudStorageService()
     const images = []
-    console.log(req.files)
     for (const file of req.files) {
         const url = await googleStorageService.uploadFileToCloudStorage(file)
         images.push(url)
     }
-
     newProduct.images = images
-    // if (req.user.role == 'premium') {
-    // newProduct.owner = req.user.id
-    const result = await productsService.createProducts(newProduct)
-    // res.send({ status: "success", payload: "producto creado con un owner premium" })
-    // } else {
-    //     res.send({ staus: "error", message: "solo usuarios premium pueden crear productos" })
-    // }
-    res.send({ status: 'success', payload: result._id })
+    if (req.user.role == 'premium') {
+        newProduct.owner = req.user.id
+        const result = await productsService.createProducts(newProduct)
+        res.send({ status: 'success', payload: result._id })
+    } else {
+        res.send({ staus: "error", message: "solo usuarios premium pueden crear productos" })
+    }
+
 }
 
 const updateProduct = async (req, res) => {
@@ -69,6 +69,12 @@ const deleteProducts = async (req, res) => {
     if (req.user.role == 'premium' && product.owner == req.user.id) {
         const result = await productsService.deleteProduct(pid)
         res.send({ status: "success", message: "Producto eliminado porque sos el owner" })
+        try {
+            const mailService = new MailerService()
+            const result = await mailService.sendMail([req.user.email], DMailTemplates.PROD_DELETE, { user: req.user })
+        } catch (error) {
+            console.log(`fallo envio de correo para ${req.user.email}`, error)
+        }
     } else if (req.user.role == 'admin') {
         const result = await productsService.deleteProduct(pid)
         res.send({ status: "success", message: "Producto eliminado porque sos admin" })

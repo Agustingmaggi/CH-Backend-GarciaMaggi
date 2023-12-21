@@ -4,5 +4,11 @@ export default {
     },
     password: {
         subject: 'restaura tu contra'
+    },
+    delete: {
+        subject: 'producto eliminado con exito!'
+    },
+    ticket: {
+        subject: 'Nueva compra!'
     }
 }

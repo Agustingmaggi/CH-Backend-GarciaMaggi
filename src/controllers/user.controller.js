@@ -11,7 +11,7 @@ const register = async (req, res) => {
         const mailService = new MailerService()
         const result = await mailService.sendMail([req.user.email], DMailTemplates.WELCOME, { user: req.user })
     } catch (error) {
-        console.log(`fallo envio de correo para ${req.user.email}`)
+        console.log(`fallo envio de correo para ${req.user.email}`, error)
     }
 
     res.clearCookie('cart')
@@ -19,20 +19,31 @@ const register = async (req, res) => {
 }
 const login = async (req, res) => {
 
-    const tokenizedUser = {
-        name: `${req.user.firstName} ${req.user.lastName}`,
-        id: req.user._id,
-        role: req.user.role,
-        email: req.user.email,
-        cart: req.user.cart
+    if (req.user.role == 'admin') {
+        const tokenizedUser = {
+            name: `${req.user.firstName} ${req.user.lastName}`,
+            role: req.user.role,
+            // Agregar cualquier otra propiedad específica para el usuario admin
+        };
+        const token = jwt.sign(tokenizedUser, config.jwt.SECRET, { expiresIn: '1d' });
+        res.cookie(config.jwt.COOKIE, token, { expiresIn: '1d' });
+        res.send({ status: 'success', message: 'Logeado como administrador' });
+    } else {
+
+        const tokenizedUser = {
+            name: `${req.user.firstName} ${req.user.lastName}`,
+            id: req.user._id,
+            role: req.user.role,
+            email: req.user.email,
+            cart: req.user.cart
+        }
+        const token = jwt.sign(tokenizedUser, config.jwt.SECRET, { expiresIn: '1d' })
+
+        res.cookie(config.jwt.COOKIE, token, { expiresIn: "1d" })
+        res.clearCookie('cart')
+        // req.logger.info("probando")
+        res.sendSuccess('Logged in')
     }
-
-    const token = jwt.sign(tokenizedUser, config.jwt.SECRET, { expiresIn: '1d' })
-
-    res.cookie(config.jwt.COOKIE, token, { expiresIn: "1d" })
-    res.clearCookie('cart')
-    // req.logger.info("probando")
-    res.sendSuccess('Logged in')
 }
 
 const current = async (req, res) => {

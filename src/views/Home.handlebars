@@ -4,42 +4,42 @@
 <a href="/register">registrate</a>
 <a href="/carrito">carrito</a>
 <a href="/logout" id="logoutButton">Logout</a>
-<!-- Mostrar elementos solo si el usuario está autenticado -->
-<!-- Mostrar otros elementos si el usuario no está autenticado -->
+<a href="/users" ">usuarios</a>
+
 {{#each productos}}
-<div class="producto">
+<div class=" producto">
     <p>{{this.title}}</p>
     <p>{{this.categories}}</p>
     <p>Precio ${{this.price}}</p>
     <p>Stock {{this.stock}}</p>
     <img src="{{this.images.[0]}}">
     <button onclick="addProduct('{{this._id}}')" class="agregar-carrito">Agregar al carrito</button>
-</div>
-{{/each}}
+    </div>
+    {{/each}}
 
-{{#if hasPrevPage}}
-<a href="/?page={{prevPage}}"><button>Anterior</button></a>
-{{/if}}
+    {{#if hasPrevPage}}
+    <a href="/?page={{prevPage}}"><button>Anterior</button></a>
+    {{/if}}
 
-<h5>{{page}}</h5>
+    <h5>{{page}}</h5>
 
-{{#if hasNextPage}}
-<a href="/?page={{nextPage}}"><button>Siguiente</button></a>
-{{/if}}
+    {{#if hasNextPage}}
+    <a href="/?page={{nextPage}}"><button>Siguiente</button></a>
+    {{/if}}
 
-<style>
-    * {
-        background-color: grey;
-    }
+    <style>
+        * {
+            background-color: grey;
+        }
 
-    .producto {
-        border: 1px solid #ccc;
-        /* Agrega un borde a cada producto */
-        padding: 10px;
-        margin: 10px;
-        text-align: center;
-    }
-</style>
+        .producto {
+            border: 1px solid #ccc;
+            /* Agrega un borde a cada producto */
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+    </style>
 
 
-<script src="/js/home.js"></script>
+    <script src="/js/home.js"></script>

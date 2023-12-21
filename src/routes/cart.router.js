@@ -14,7 +14,7 @@ class CartRouter extends BaseRouter {
         // //este endpoint aumenta la cantidad de un producto ya agregado en un carrito
         // this.put('/products/:productId', ['NO_AUTH'], cartController.addProdToCart)
 
-        this.post('/:cid/purchase', ['PUBLIC'], cartController.ticket)
+        this.post('/purchase', ['PUBLIC'], cartController.ticket)
     }
 }
 const cartRouter = new CartRouter()

@@ -22,7 +22,7 @@ export default class CloudStorageService {
             blobStream.on('finish', () => {
                 //Si llegaste hasta aquí, ya se escribió en el bucket
                 const publicURL = `https://storage.googleapis.com/${this.bucket}/${blob.name}`
-                console.log(publicURL);
+                // console.log(publicURL);
                 resolve(publicURL);
             })
             blobStream.end(file.buffer);

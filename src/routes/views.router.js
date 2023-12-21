@@ -9,6 +9,7 @@ class ViewsRouter extends BaseRouter {
         this.get('/profile', ['AUTH'], viewsController.profile)
         this.get('/carrito', ['AUTH'], viewsController.carrito)
         this.get('/passwordRestore', ['PUBLIC'], viewsController.passwordRestore)
+        this.get('/users', ['AUTH'], viewsController.users)
     }
 }
 

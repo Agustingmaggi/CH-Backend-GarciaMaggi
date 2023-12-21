@@ -7,7 +7,7 @@ export default class productsDao {
     }
 
     getProduct = (params) => {
-        return productModel.findOne(params).lean()
+        return productModel.findOne(params)
     }
 
     createProduct = (product) => {

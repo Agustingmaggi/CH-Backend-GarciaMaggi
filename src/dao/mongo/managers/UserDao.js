@@ -3,7 +3,7 @@ import userModel from "../models/user.js"
 export default class userDao {
 
     get = () => {
-        return userModel.find().lean()
+        return userModel.find()
     }
 
     getBy = (param) => {

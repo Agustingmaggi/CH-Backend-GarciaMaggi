@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js -m dev",
+    "prod": "nodemon src/app.js -m prod",
     "test": "mocha src/test/Session/Dao/Session.test.js"
   },
   "keywords": [],

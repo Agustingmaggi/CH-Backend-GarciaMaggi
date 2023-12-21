@@ -11,6 +11,10 @@
     <img src="{{this.product.images.[0]}}">
 </div>
 {{/each}}
+<p>Total del carrito: ${{ total }}</p>
+<form id="comprar">
+    <button type="submit">Comprar</button>
+</form>
 {{else}}
 <p>No tienes productos en tu carrito.</p>
 {{/if}}
@@ -23,6 +27,4 @@
         text-align: center;
     }
 </style>
-
-{{!--
-<script src="../js/carrito"></script> --}}
+<script src="../js/carrito.js"></script>

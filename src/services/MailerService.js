@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer'
-import config from '../config/config.js'
 import DMailInfo from '../constants/DMailInfo.js'
 import Handlebars from 'handlebars'
 import fs from 'fs'
@@ -12,7 +11,7 @@ export default class MailerService {
             port: 587,
             auth: {
                 user: "agustingarciamaggi1@gmail.com",
-                pass: "cskg qidx ondb gjqh"
+                pass: "rhkg rxvd kxmc geof"
             }
         })
     }

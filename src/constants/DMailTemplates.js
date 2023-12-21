@@ -1,4 +1,6 @@
 export default {
     WELCOME: "welcome",
-    PASSWORD: 'password'
+    PASSWORD: 'password',
+    PROD_DELETE: 'delete',
+    TICKET: 'ticket'
 }

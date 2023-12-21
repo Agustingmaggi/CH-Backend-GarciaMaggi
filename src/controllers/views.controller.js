@@ -1,8 +1,8 @@
-// import { viewsService } from "../services/views.js"
 import productModel from '../dao/mongo/models/products.js';
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
-import { cartService } from '../services/index.js'
+import { cartService, productsService } from '../services/index.js'
+import { userService } from "../services/index.js"
 
 const home = async (req, res) => {
     const { page = 1 } = req.query
@@ -32,14 +32,23 @@ const login = async (req, res) => {
 }
 
 const profile = async (req, res) => {
-    res.render('Profile', { user: req.user });
+    const { id } = req.user
+    const productos = await productsService.getProducts()
+    const userProducts = productos.filter(producto => producto.owner === id);
+
+    res.render('Profile', { user: req.user, productos: userProducts });
 }
 
 const carrito = async (req, res) => {
     const cartId = req.user.cart
     const cart = await cartService.getCart(cartId).populate('products.product').lean()
     const products = cart.products
-    res.render('Carrito', { products: products })
+    // Calcular el total del carrito sumando el producto de cantidad por precio para cada producto
+    const total = products.reduce((accumulator, currentProduct) => {
+        return accumulator + (currentProduct.quantity * currentProduct.product.price);
+    }, 0);
+
+    res.render('Carrito', { products: products, total: total })
     // console.log(products)
 }
 
@@ -58,4 +67,14 @@ const passwordRestore = async (req, res) => {
     }
 }
 
-export default { home, register, login, profile, carrito, passwordRestore }
+const users = async (req, res) => {
+    const usuarios = await userService.get()
+    console.log(req.user)
+    if (req.user.role === 'admin') {
+        res.send(usuarios)
+    } else {
+        res.send('Solo los admins pueden ver a los usuarios de la db')
+    }
+}
+
+export default { home, register, login, profile, carrito, passwordRestore, users }

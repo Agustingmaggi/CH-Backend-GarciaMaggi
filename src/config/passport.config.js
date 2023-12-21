@@ -18,7 +18,7 @@ const initializeStrategies = () => {
 
                 if (!firstName || !email) return done(null, false, { message: "incomplete values" })
 
-                const exists = await usersService.getBy({ email })
+                const exists = await userService.getBy({ email })
                 if (exists) return done(null, false, { message: 'User already exists' })
 
                 const hashedPassword = await auth.createHash(password)
@@ -40,7 +40,7 @@ const initializeStrategies = () => {
 
                 newUser.cart = cart
 
-                const result = await usersService.create(newUser)
+                const result = await userService.createUser(newUser)
                 console.log(firstName)
                 return done(null, result)
             } catch (error) {
@@ -63,18 +63,17 @@ const initializeStrategies = () => {
                         password: "adminCod3r123",
                         role: "admin"
                     }
-                    req.session.user = adminUser;
-                    console.log(adminUser)
-                    return res.send({ status: "success", message: "Logeado como administrador" });
+                    return done(null, adminUser);
+                    // return res.send({ status: "success", message: "Logeado como administrador" });
                 }
 
-                const user = await usersService.getBy({ email })
+                const user = await userService.getBy({ email })
                 if (!user) return done(null, false, { message: "Incorrect Credentials" })
                 const isValidPassword = await auth.validatePassword(password, user.password)
                 if (!isValidPassword) done(null, false, { message: "Incorrect Credentials" })
                 done(null, user)
             } catch (error) {
-                console.log(error)
+                // console.log(error)
                 return done(error)
             }
         }))
@@ -87,7 +86,7 @@ const initializeStrategies = () => {
         passReqToCallback: true
     }, async (req, accessToken, refreshToken, profile, done) => {
         const { _json } = profile
-        const user = await userService.getBy({ email: _json.email })
+        const user = await userervice.getBy({ email: _json.email })
         if (user) {
             return done(null, user)
         } else {
@@ -124,14 +123,14 @@ const initializeStrategies = () => {
         console.log(profile)
         const { email, name } = profile._json
 
-        const user = await usersService.getBy({ email })
+        const user = await userService.getBy({ email })
         if (!user) {
             const newUser = {
                 firstName: name,
                 email,
                 password: ''
             }
-            const result = await usersService.create(newUser)
+            const result = await userService.createUser(newUser)
             done(null, result)
         } else {
             done(null, user)
@@ -142,7 +141,7 @@ const initializeStrategies = () => {
         return done(null, user._id)
     })
     passport.deserializeUser(async (id, done) => {
-        const user = await usersService.getBy({ _id: id })
+        const user = await userService.getBy({ _id: id })
         done(null, user)
     })
 }
